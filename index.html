@@ -176,11 +176,11 @@ let thrusterParts = [];
 
 // ── Wave definitions ──────────────────────────────────────────────────────────
 const WAVES = [
-  { time: 0,    name: 'Wave 1: Asteroid Field',  speed: 3.5, rate: 90,  types: ['asteroid'] },
-  { time: 1200, name: 'Wave 2: Energy Storm',    speed: 4.2, rate: 75,  types: ['asteroid','gate'] },
-  { time: 2400, name: 'Wave 3: Debris Cloud',    speed: 5.0, rate: 60,  types: ['asteroid','gate','debris'] },
-  { time: 3800, name: 'Wave 4: Chaos',           speed: 6.0, rate: 45,  types: ['asteroid','gate','debris'] },
-  { time: 5400, name: 'Wave 5: Singularity',     speed: 7.5, rate: 35,  types: ['asteroid','gate','debris'] },
+  { time:  0,     name: 'Wave 1: Asteroid Field',  speed: 3.5, rate: 900,  types: ['asteroid'] },
+  { time:  20000, name: 'Wave 2: Energy Storm',    speed: 4.2, rate: 750,  types: ['asteroid','gate'] },
+  { time:  45000, name: 'Wave 3: Debris Cloud',    speed: 5.0, rate: 600,  types: ['asteroid','gate','debris'] },
+  { time:  80000, name: 'Wave 4: Chaos',           speed: 6.0, rate: 450,  types: ['asteroid','gate','debris'] },
+  { time: 120000, name: 'Wave 5: Singularity',     speed: 7.5, rate: 300,  types: ['asteroid','gate','debris'] },
 ];
 
 function currentWave() {
@@ -240,11 +240,12 @@ function createPlayer() {
 }
 
 function updatePlayer(dt) {
-  if (isUp())   player.vy -= player.accel;
-  if (isDown()) player.vy += player.accel;
-  player.vy *= player.friction;
+  const dtF = dt / 16.667;
+  if (isUp())   player.vy -= player.accel * dtF;
+  if (isDown()) player.vy += player.accel * dtF;
+  player.vy *= Math.pow(player.friction, dtF);
   player.vy = Math.max(-player.maxVy, Math.min(player.maxVy, player.vy));
-  player.y  += player.vy;
+  player.y  += player.vy * dtF;
   player.y   = Math.max(player.h / 2 + 4, Math.min(BASE_H - player.h / 2 - 4, player.y));
   if (player.invincible > 0) player.invincible -= dt;
 
@@ -397,20 +398,21 @@ function updateObstacles(dt) {
   }
 
   obstacles = obstacles.filter(o => o.x > -80 && o.life > 0);
+  const dtFactor = dt / 16.667; // normalize to 60fps
   obstacles.forEach(o => {
     const t = gameTime / 1000;
-    o.x -= o.spd;
+    o.x -= o.spd * dtFactor;
     if (o.type === 'asteroid') {
       o.y    = o.baseY + Math.sin(t * o.freq + o.phase) * o.amp;
-      o.rot += o.rotSpd;
+      o.rot += o.rotSpd * dtFactor;
     } else if (o.type === 'gate') {
       const shift = Math.sin(t * o.freq + o.phase) * o.amp * 0.4;
       o.topY = o.baseY - o.gap / 2 + shift;
       o.botY = o.baseY + o.gap / 2 + shift;
-      o.pulse = (o.pulse + 0.05) % (Math.PI * 2);
+      o.pulse = (o.pulse + 0.05 * dtFactor) % (Math.PI * 2);
     } else {
       o.y    = o.baseY + Math.sin(t * o.freq + o.phase) * o.amp;
-      o.rot += o.rotSpd;
+      o.rot += o.rotSpd * dtFactor;
     }
   });
 }

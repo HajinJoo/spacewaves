@@ -24,10 +24,10 @@ Pilot your spaceship through increasingly dangerous waves of obstacles. Dodge as
 | Wave | Unlock Time | Obstacles |
 |------|-------------|-----------|
 | Wave 1: Asteroid Field | 0s | Asteroids |
-| Wave 2: Energy Storm | ~20s | Asteroids + Energy Gates |
-| Wave 3: Debris Cloud | ~40s | All types, faster |
-| Wave 4: Chaos | ~63s | All types, even faster |
-| Wave 5: Singularity | ~90s | Maximum chaos |
+| Wave 2: Energy Storm | 20s | Asteroids + Energy Gates |
+| Wave 3: Debris Cloud | 45s | All types, faster |
+| Wave 4: Chaos | 1:20 | All types, even faster |
+| Wave 5: Singularity | 2:00 | Maximum chaos |
 
 ## 🚀 How to Run
 
